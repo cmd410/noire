@@ -1,0 +1,12 @@
+{
+    "prologue": {
+      "address": "",
+      "port": 8080,
+      "debug": true,
+      "reusePort": true,
+      "appName": "Noire",
+      "secretKey": "Very secret, real deal",
+      "bufSize": 40960
+    },
+    "name": "debug"
+}

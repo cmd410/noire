@@ -1,0 +1,12 @@
+# IDE Files
+.vscode
+
+# Executables
+noire*
+!noire.nim
+!noire.nimble
+
+# logs
+*.log
+
+_build/data/
