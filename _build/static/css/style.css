@@ -4,7 +4,7 @@
 }
 
 :root {
-    --fnt-size-p: 16pt;       /* base font size */
+    --fnt-size-p: 12pt;       /* base font size */
     --clr-fg: #323232;      /* foreground color (text mostly) */
     --clr-fg-soft: #32323232;
     --clr-fg-soft-but-a-little-hard: #32323264;
@@ -77,17 +77,17 @@ span {
 
 /* Codeblocks and syntax highlighing */
 pre {
-    padding: 0.5em 0;
+    padding: 0 0;
     height: fit-content;
 }
 
 code {
-    background-color: #dddddd;
+    background-color: #eeeeee;
     padding: 0.5em;
     border-radius: 0.2em;
     display: inline;
-    box-shadow: 0 0 0.5em var(--clr-fg-soft);
-    border: 2px solid var(--clr-fg-soft);
+    box-shadow: 0 0 0.1em var(--clr-fg-soft);
+    border: 1px solid var(--clr-fg-soft);
     height: fit-content;
     line-height: 1;
     margin-bottom: 1em;
@@ -97,20 +97,20 @@ pre > code {
     overflow-x: scroll;
 }
 
+p > code {
+    border: 1px solid var(--clr-fg-soft);
+}
+
 span.kwd {
-    color: #971f8d;
+    color: #a70899;
 }
 
 span.num {
-    color: #973b1f;
+    color: #9e3413;
 }
 
 span.str {
-    color: #1f9747;
-}
-
-span.cmd {
-    color: #1f5797;
+    color: #0c973a;
 }
 
 blockquote {
@@ -138,7 +138,6 @@ h3 {font-size: 1.3em}
 h4 {font-size: 1.2em}
 h5 {font-size: 1.1em}
 h6 {font-size: 1em}
-
 h1, h2, h3, h4, h5, h6 {
     width: 100%;
     text-align: center;
@@ -146,6 +145,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-bottom: 1em;
     color: var(--clr-fg);
     display: block;
+    line-height: 1;
 }
 
 /* Navigation */
@@ -220,17 +220,30 @@ nav > a > img {
 
 .post-preview {
     flex: 1 1 33%;
-    box-shadow: 0 0 1em var(--clr-fg-soft);
+    box-shadow: 0 0 0.5rem var(--clr-fg-soft);
     padding: 1em;
     transition: all ease-in-out 0.05s;
-    min-width: 25ch;
-    max-width: 25ch;
     width: 25ch;
+    max-width: 25ch;
+    min-width: 25ch;
+    aspect-ratio: 1/1;
     border: 2px solid #32323200;
     filter: grayscale(1);
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+}
+
+.post-preview > p {
+    overflow-y: hidden;
+    font-size: 0.95rem;
+    padding: 1em;
+}
+
+.post-preview > a > h1 {
+    font-size: 1.05rem;
+    height: fit-content;
+    text-transform: uppercase;
 }
 
 .post-preview > * {
@@ -253,7 +266,7 @@ nav > a > img {
     width: 100%;
     color: var(--clr-fg);
     font-style: italic;
-    font-size: 0.6em;
+    font-size: 0.6rem;
     margin-top: auto;
 }
 
@@ -284,6 +297,26 @@ nav > a > img {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(#ffffff00, #32323216);
+    background-image: linear-gradient(#ffffff00, #32323207);
     z-index: 4;
+}
+
+.tags-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 3pt;
+    flex-wrap: wrap;
+    height: fit-content;
+}
+
+.tag {
+    background-color: var(--clr-fg);
+    color: var(--clr-bg);
+    padding: 2pt 6pt;
+    font-size: 9pt;
+    border-radius: 3pt;
+    text-shadow: none;
+    width: fit-content;
+    line-height: 1;
 }
