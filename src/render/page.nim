@@ -74,7 +74,7 @@ macro page*(arg: untyped): string =
       warning("Unknown element: " & repr(keynode).escape & " will be skipped", keynode)
 
   result = quote do:
-    hg.html(
+    "<!DOCTYPE html>" & hg.html(
       hg.head(
         hg.meta(charset="UTF-8"),
         `titleStmt`,
