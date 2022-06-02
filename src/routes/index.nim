@@ -20,8 +20,10 @@ proc indexRoute*(ctx: Context) {.async.} =
     except ValueError:
       1
 
+  # Get posts on current page
   let indexer = getPostsPage(max(0, currentPage - 1), 15)
 
+  # Render posts
   for i in indexer.posts:
     let docName = i.filename.splitFile()[1] & ".html"
 
@@ -30,10 +32,12 @@ proc indexRoute*(ctx: Context) {.async.} =
       hg.div(class="shadow-bg"),
       hg.a(href="/" & i.author.encodeUrl(false) & "/" & docName.encodeUrl(false), hg.h1(i.title)),
       hg.p(i.exerpt),
-      hg.span("Posted by " & i.author & " at " & $i.dateCreated.format("ddd MMMM dd yyyy")),
+      i.genTags(),
+      hg.span("Posted by " & i.author & " on " & $i.dateCreated.format("ddd MMMM dd yyyy")),
       style="background-image: url('" & i.image & "')"
     )
 
+  # Generate page navigation
   var pageNav = ""
   if indexer.totalPages > 1:
     if currentPage > 1:
@@ -46,6 +50,7 @@ proc indexRoute*(ctx: Context) {.async.} =
         pageNav.add hg.a(class="nav-link", href="/?page=" & $i, $i)
       pageNav.add hg.a(class="nav-link", href="/?page=" & $(currentPage + 1), "Next")
 
+  # Final page creation
   let index = 
     page:
       title = "Noire"
