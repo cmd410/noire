@@ -8,5 +8,6 @@ noire*
 
 # logs
 *.log
+*.log.?
 
 _build/data/
