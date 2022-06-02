@@ -35,7 +35,7 @@ type
 
 
 proc getDataDir*(): string =
-  getAppDir() / "data"  # TODO make this configurable
+  result = getEnv("NOIRE_DATA_DIR", getAppDir() / "data")
 
 
 proc getPostsDir*(): string =
