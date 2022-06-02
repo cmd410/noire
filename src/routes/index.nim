@@ -20,7 +20,7 @@ proc indexRoute*(ctx: Context) {.async.} =
     except ValueError:
       1
 
-  let indexer = getPostsPage(max(0, currentPage - 1), 25)
+  let indexer = getPostsPage(max(0, currentPage - 1), 15)
 
   for i in indexer.posts:
     let docName = i.filename.splitFile()[1] & ".html"
