@@ -4,7 +4,7 @@
 }
 
 :root {
-    --fnt-size-p: 12pt;       /* base font size */
+    --fnt-size-p: 16pt;       /* base font size */
     --clr-fg: #323232;      /* foreground color (text mostly) */
     --clr-fg-soft: #32323232;
     --clr-fg-soft-but-a-little-hard: #32323264;
@@ -145,6 +145,7 @@ h1, h2, h3, h4, h5, h6 {
     border-bottom: 1px solid var( --clr-fg-soft-but-a-little-hard);
     margin-bottom: 1em;
     color: var(--clr-fg);
+    display: block;
 }
 
 /* Navigation */
