@@ -10,6 +10,7 @@ import strtabs
 import math
 import packages/docutils/highlite
 import uri
+import sequtils
 
 import markdown
 
@@ -89,6 +90,22 @@ proc highlightSyntax(source: string): string =
 
   result.add "</code></pre>"
 
+
+
+proc sanitizeJS(node: var XmlNode) =
+  ## Make <script> tags in html harmless
+  
+  iterator scriptKiddies(node: var XmlNode): Natural =
+    var i = 0
+    for child in node.mitems:
+      if child.tag == "script":
+        yield i
+        continue
+      i.inc  # only increment on non-script tags
+      child.sanitizeJS()
+  
+  for i in node.scriptKiddies().toSeq:
+    node.delete i
 
 proc newPost*(fullPath: string): Post =
   let author = fullPath.splitPath[0].extractFilename
@@ -191,6 +208,8 @@ proc newPost*(fullPath: string): Post =
     if link.startsWith "/?":
       break
     image = link
+
+  html.sanitizeJS()
 
   # Some more things to parse here
 
