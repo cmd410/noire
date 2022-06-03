@@ -30,7 +30,7 @@ proc indexRoute*(ctx: Context) {.async.} =
     
     let bgImg =
       if hasImageBg:
-        "background-image: url('" & i.image & "?owner=" & i.author & "')"
+        "background-image: url('" & i.image & "')"
       else:
         ""
     let cls =

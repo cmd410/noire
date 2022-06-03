@@ -9,6 +9,7 @@ import xmltree
 import strtabs
 import math
 import packages/docutils/highlite
+import uri
 
 import markdown
 
@@ -90,6 +91,8 @@ proc highlightSyntax(source: string): string =
 
 
 proc newPost*(fullPath: string): Post =
+  let author = fullPath.splitPath[0].extractFilename
+
   var info: FileInfo
   try:
     info = fullPath.getFileInfo
@@ -168,7 +171,7 @@ proc newPost*(fullPath: string): Post =
   var exerpt = ""
   var image = ""
   
-  let html = parseHtml(content)
+  var html = parseHtml(content)
   for i in html.findAll("h1"):
     title = i.innerText()
     break
@@ -179,8 +182,15 @@ proc newPost*(fullPath: string): Post =
     else:
       break
   for i in html.findAll("img"):
-    image = i.attrs.getOrDefault("src")
-    break
+    # replace all img src to user-local paths
+    let imgUrl = parseUri("/") / author / i.attrs.getOrDefault("src", "")
+    i.attrs["src"] = imgUrl.path
+    i.attrs["lazy"] = ""
+  for i in html.findAll("img"):
+    let link = i.attrs.getOrDefault("src")
+    if link.startsWith "/?":
+      break
+    image = link
 
   # Some more things to parse here
 
@@ -189,8 +199,9 @@ proc newPost*(fullPath: string): Post =
     fullPath: fullPath,
     dateCreated: info.creationTime,
     dateModified: info.lastWriteTime,
-    author: fullPath.splitPath[0].extractFilename,
-    content: content,
+    author: author,
+    # the following line looks cringe, but is the most efficient way to get rid of <document> tag I know of
+    content: ($html).multiReplace(("<document>", ""), ("</document>", "")),
     title: title,
     exerpt: exerpt,
     tags: tags,

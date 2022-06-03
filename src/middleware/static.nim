@@ -4,41 +4,23 @@
 ## Don't know how secure this is but it shall do for now.
 
 import std/os
-import std/uri
 import std/strutils
 
 import prologue
 
-import ../core/postindexer
+from ../core/postindexer import getPostsDir
 
 proc staticFilesMiddleware*(staticPath: string): HandlerAsync =
   result = proc(ctx: Context) {.async.} =
-    let requested_res =  staticPath / ctx.request.path
-    
-    # If a resource is requested from user's post
-    # we need to query files in their posts folder
-    # so that users can upload media content for their posts
-    block userFile:
-      var user = ctx.getQueryParams("owner", "")
-      
-      if user == "":
-        let referer = parseUri(ctx.request.getHeaderOrDefault("Referer", @["/"])[0])
-        if referer.path != "/":
-          let parts = referer.path.splitPath()
-          if parts.head.len == 0:
-            break userFile
-          if parts.head.rfind("/") != parts.head.low:
-            break userFile
-          user = parts.head
+    let path = ctx.request.path
 
-      let user_res = getPostsDir() / user / ctx.request.path
-      if user_res.fileExists:
-        await ctx.staticFileResponse(user_res, "")
-        await ctx.switch
-        return
+    # First check user resource
+    let user_res = getPostsDir() / path
+    if user_res.fileExists:
+      await ctx.staticFileResponse(user_res, "")
     
-    # If user content not found or is not applicable
-    # fallback to common static files dir
-    if requested_res.fileExists:
-      await ctx.staticFileResponse(requested_res, "")
+    # Then fallback to common static dir
+    let common_res =  staticPath / path
+    if common_res.fileExists:
+      await ctx.staticFileResponse(common_res, "")
     await ctx.switch
