@@ -128,7 +128,9 @@ img {
     box-shadow: 0 0 1em var(--clr-fg-soft);
     border-radius: 0.5em;
     max-width: 100%;
+    max-height: 100vh;
     height: auto;
+    margin: auto;
 }
 
 /* Headers */
@@ -179,7 +181,7 @@ nav > a > img {
     text-decoration: none;
     border-left: 1px solid #32323200;
     border-right: 1px solid #32323200;
-    transition: all 0.05s ease-in-out;
+    transition: all 0.1s ease-in-out;
 }
 
 .nav-link:hover {
@@ -222,7 +224,7 @@ nav > a > img {
     flex: 1 1 33%;
     box-shadow: 0 0 0.5rem var(--clr-fg-soft);
     padding: 1em;
-    transition: all ease-in-out 0.05s;
+    transition: all ease-in-out 0.1s;
     width: 25ch;
     max-width: 25ch;
     min-width: 25ch;
@@ -246,15 +248,13 @@ nav > a > img {
     text-transform: uppercase;
 }
 
-.post-preview > * {
-    color: black;
-    text-shadow: 1px 1px 1px white;
+.post-preview > * ,.post-preview > a > h1 {
     z-index: 5;
 }
 
 
 .post-preview:hover {
-    transform: scale(1.05);
+    transform: scale(1.1);
     box-shadow: 0 0 1.02em var(--clr-fg-soft);
     border: 2px solid var(--clr-fg-soft);
     filter: grayscale(0);
@@ -264,14 +264,22 @@ nav > a > img {
     display: inline-block;
     text-align: center;
     width: 100%;
-    color: var(--clr-fg);
     font-style: italic;
     font-size: 0.6rem;
     margin-top: auto;
 }
 
-.post-preview > h1 {
+.post-preview > a > h1 {
     text-align: center;
+    line-height: 2;
+}
+
+.text-on-img > a > h1 {
+    border-bottom: 1px solid white;
+}
+
+.post-preview > a > h1::after {
+    content: " \276F\276F"
 }
 
 .post-preview > p {
@@ -291,14 +299,29 @@ nav > a > img {
     text-shadow: 0 0 1px red;
 }
 
-.shadow-bg {
+.text-on-img {
+    position: relative;
+}
+
+.text-on-img * {
+    color: white;
+    text-shadow: none;
+}
+
+.text-on-img > .shadow-bg {
+    display: grid;
     position: absolute;
-    top: 0;
-    left: 0;
+    z-index: 4;
+    background-image: radial-gradient(rgba(0,0,0,0), rgba(0,0,0,0.3));
+    border-radius: 0;
+    top: 0%;
+    left: 0%;
     width: 100%;
     height: 100%;
-    background-image: linear-gradient(#ffffff00, #32323207);
-    z-index: 4;
+}
+
+.text-on-img:hover > .shadow-bg {
+    background-image: radial-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6));
 }
 
 .tags-container {

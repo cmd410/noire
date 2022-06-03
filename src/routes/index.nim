@@ -26,15 +26,31 @@ proc indexRoute*(ctx: Context) {.async.} =
   # Render posts
   for i in indexer.posts:
     let docName = i.filename.splitFile()[1] & ".html"
-
+    let hasImageBg = i.image.len > 0
+    
+    let bgImg =
+      if hasImageBg:
+        "background-image: url('" & i.image & "?owner=" & i.author & "')"
+      else:
+        ""
+    let cls =
+      if hasImageBg:
+        "post-preview text-on-img"
+      else:
+        "post-preview"
+    let shadowBg =
+      if hasImageBg:
+        hg.div(class="shadow-bg")
+      else:
+        ""
     postsArr.add hg.div(
-      class="post-preview",
-      hg.div(class="shadow-bg"),
+      class=cls,
+      shadowBg,
       hg.a(href="/" & i.author.encodeUrl(false) & "/" & docName.encodeUrl(false), hg.h1(i.title)),
       hg.p(i.exerpt),
       i.genTags(),
       hg.span("Posted by " & i.author & " on " & $i.dateCreated.format("ddd MMMM dd yyyy")),
-      style="background-image: url('" & i.image & "')"
+      style=bgImg
     )
 
   # Generate page navigation
