@@ -52,29 +52,18 @@ proc `<`*(a,b: PostOpt): bool =
   a.dateCreated.toUnix > b.dateCreated.toUnix
 
 
-proc highlightSyntax(source: string): string =
-  ## Does syntax highlighting for markdown code blocks
-  ## Assumes first line is language
-  ## If not, returns code block unchanged.
-  let lines = source.split("\n", 1)
-  if not lines.len == 2:
-    return "```" & source & "\n```"
-  let lang = lines[0].strip()
-  let code = lines[1].strip()
+proc highlightSyntax(source: string, lang: SourceLanguage): string =
+  ## Does syntax highlighting
   
-  let langEnum = getSourceLanguage(lang)
-  if langEnum == langNone:
-    return "```" & source & "\n```" 
-  
-  result = "<pre><code lang=\"language-" & lang.toLower & "\">"
+  result = ""
   var tokenizer: GeneralTokenizer
-  tokenizer.initGeneralTokenizer(code)
+  tokenizer.initGeneralTokenizer(source)
 
   template current(tk: GeneralTokenizer): untyped =
-    substr(code, tokenizer.start, tokenizer.length + tokenizer.start - 1)
+    substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1)
 
   while true:
-    tokenizer.getNextToken(langEnum)
+    tokenizer.getNextToken(lang)
     case tokenizer.kind
     of gtEof: break
     of gtKeyword:
@@ -136,52 +125,7 @@ proc newPost*(fullPath: string): Post =
       return post
   
   var tags: seq[string] = @[]
-  let originalMd = block:
-    # here we freaking go, hold on, this will be a rough ride...
-    # this code is responsible for parsing tags and doing syntax-highlighting
-    var
-      text = fullpath.readFile()
-      buff: seq[char] = @[]
-      tag = ""
-      isCB = false
-      codeBlockSource = ""
-    
-    let nontags = {'#', ' ', '\t', '\r', '\n'}
-    for c in text:
-      buff.add c
-      if buff.len < 2:
-        continue
-      if buff.len >= 3:
-        # Catch ``` in markdown to tell if we are in code block or not
-        if buff[buff.high] & buff[buff.high-1] & buff[buff.high-2] == "```":
-          for i in 1..3:
-            discard buff.pop
-          isCB = not isCB
-
-      if isCB: # if we are in code block
-        if c != '`':
-          discard buff.pop
-          codeBlockSource.add c
-        continue
-      elif codeBLockSource.len > 0:  # if we just left code block
-        buff.add highlightSyntax(codeBlockSource) # insert the highlighted code to buffer
-        codeBlockSource = ""
-        continue
-
-      # Parse tag
-      if (buff[buff.high-1] == '#') and c notin nontags:
-        discard buff.pop
-        discard buff.pop
-        tag = tag & c
-      elif tag.len > 0:
-        if c notin nontags:
-          tag = tag & c
-          discard buff.pop
-        else:
-          tags.add tag
-          tag = ""
-    
-    buff.join()
+  let originalMd = fullpath.readFile()
 
   let content = markdown(originalMd)
   var title = "Untitled"
@@ -211,8 +155,25 @@ proc newPost*(fullPath: string): Post =
 
   html.sanitizeJS()
 
-  # Some more things to parse here
+  # perform syntax highlighting
+  for pre in html.mitems:
+    if pre.tag != "pre": continue
+    for code in pre.mitems:
+      if code.tag != "code": continue
+      let lang = block:
+        var s = code.attrs.getOrDefault("class", "")
+        s.removePrefix("language-")
+        getSourceLanguage(s)
 
+      case lang
+      of langNone:
+        continue
+      else:
+        let source = code.innerText
+        code.clear
+        code.insert(newVerbatimText(highlightSyntax(source, lang)), 0)
+
+  # Some more things to parse here
   result = Post(
     filename: fullPath.extractFilename,
     fullPath: fullPath,
