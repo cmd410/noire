@@ -69,6 +69,8 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
       result.add "<span class=\"str\">" & tokenizer.current & "</span>"
     of gtIdentifier:
       result.add "<span class=\"ide\">" & tokenizer.current & "</span>"
+    of gtComment:
+      result.add "<span class=\"com\">" & tokenizer.current & "</span>"
     else:
       result.add tokenizer.current
 
@@ -253,7 +255,6 @@ proc newPost*(fullPath: string): Post =
   if f.open(metapath, fmWrite):
     f.write `$`(%result)
     f.close()
-
 
 
 proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
