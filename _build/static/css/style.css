@@ -29,7 +29,7 @@
     /* Colors */
     --clr-bg-main: #fdfdfd;
     --clr-fg-main: #202530;
-    --clr-accent-main: red;
+    --clr-accent-main: #ad1804;
 
     /* Syntax highlighing colors */
     --clr-code-block-bg: #202530; /* Code block background */
@@ -38,6 +38,7 @@
     --clr-syn-num: #ffd580; /* Number color */
     --clr-syn-str: #bae67e; /* String color */
     --clr-syn-ide: #ffffff;   /* Identifier color */
+    --clr-syn-com: #686868;
 }
 
 *:not(head) {
@@ -226,6 +227,7 @@ span.kwd {color: var(--clr-syn-kwd);}
 span.num {color: var(--clr-syn-num);}
 span.str {color: var(--clr-syn-str);}
 span.ide {color: var(--clr-syn-ide);}
+span.com {color: var(--clr-syn-com)}
 /* Block quotes */
 blockquote {
     border-left: 3px solid var(--clr-fg-main);
