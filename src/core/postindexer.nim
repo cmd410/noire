@@ -10,7 +10,6 @@ import strtabs
 import math
 import packages/docutils/highlite
 import uri
-import sequtils
 
 import markdown
 
@@ -266,7 +265,7 @@ proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
       continue
     try:
       posts.push newPost(path)
-    except OSError:
+    except PostNotExistsError:
       continue
   
   result.totalPages = ceilDiv(posts.len, perPage)
