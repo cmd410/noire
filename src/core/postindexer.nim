@@ -119,7 +119,8 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
     if element.kind != xnElement:
       i.inc
       continue
-    
+    if element.attrs == nil:
+      element.attrs = newStringTable(modeCaseInsensitive)
     case element.tag:
     of "pre":
       # perform syntax highlighting
@@ -155,6 +156,22 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
     of "script":
       deletionQueue.add i
       continue
+    of "li":
+      for sub in element.mitems:
+        case sub.kind
+        of xnText:
+          var text = sub.text
+          if text.startsWith "[ ]":
+            text.removePrefix("[ ]")
+            sub.text = text
+            element.attrs["class"] = "unchk"
+          elif text.startsWith "[x]":
+            text.removePrefix("[x]")
+            sub.text = text
+            element.attrs["class"] = "chk"
+        of xnElement:
+          sub.normalizeHtml()
+        else: discard
     else:
       element.normalizeHtml(ctxDir)
     i.inc

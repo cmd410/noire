@@ -243,6 +243,22 @@ ul > li::before {
 li > *:not(:nth-child(2)) {
     padding: 0 2ch;
 }
+li.chk::before, li.unchk::before {
+    display: inline-block;
+    border: 1px solid var(--clr-fg-main);
+    min-height: 1em;
+    aspect-ratio: 1/1;
+    text-align: center;
+    padding: 0;
+    line-height: 1;
+    border-radius: 2pt;
+}
+li.chk::before {
+    content: '\2713';
+}
+li.unchk::before {
+    content: '';
+}
 ol {
     list-style: none;
     counter-reset: li;
