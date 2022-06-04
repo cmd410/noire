@@ -12,7 +12,12 @@ proc genNav*(): string =
     hg.a(
       class="nav-link",
       href="/",
-      hg.img(src="/favicon.ico", alt="Home")
+      "Home"
+    ),
+    hg.a(
+      class="nav-link",
+      href="/srch",
+      "Search"
     )
   )
 

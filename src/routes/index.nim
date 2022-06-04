@@ -21,7 +21,7 @@ proc indexRoute*(ctx: Context) {.async.} =
       1
 
   # Get posts on current page
-  let indexer = getPostsPage(max(0, currentPage - 1), 15)
+  let indexer = getPostsPage(max(0, currentPage - 1), 2)
 
   # Render posts
   for i in indexer.posts:
@@ -30,46 +30,36 @@ proc indexRoute*(ctx: Context) {.async.} =
     
     let bgImg =
       if hasImageBg:
-        "background-image: url('" & i.image & "')"
+        hg.img(class="post-img", src=i.image, alt="Post preview")
       else:
         ""
-    let cls =
-      if hasImageBg:
-        "post-preview text-on-img"
-      else:
-        "post-preview"
-    let shadowBg =
-      if hasImageBg:
-        hg.div(class="shadow-bg")
-      else:
-        ""
+    
     postsArr.add hg.div(
-      class=cls,
-      shadowBg,
+      class="post-preview",
       hg.a(href="/" & i.author.encodeUrl(false) & "/" & docName.encodeUrl(false), hg.h1(i.title)),
+      bgImg,
       hg.p(i.exerpt),
-      i.genTags(),
-      hg.span("Posted by " & i.author & " on " & $i.dateCreated.format("ddd MMMM dd yyyy")),
-      style=bgImg
+      i.genTags()
     )
 
   # Generate page navigation
   var pageNav = ""
   if indexer.totalPages > 1:
     if currentPage > 1:
-      pageNav.add hg.a(class="nav-link", href="/?page=" & $(currentPage - 1), "Prev")
+      pageNav.add hg.a(class="page-link", id="prev", href="/?page=" & $(currentPage - 1), "Prev")
       for i in max(currentPage-2, 1)..<currentPage:
-        pageNav.add hg.a(class="nav-link", href="/?page=" & $i, $i)
-    pageNav.add hg.a(class="active-page nav-link", href="/?page=" & $currentPage, $currentPage)
+        pageNav.add hg.a(class="page-link", href="/?page=" & $i, $i)
+    pageNav.add hg.a(class="active-page page-link", href="/?page=" & $currentPage, $currentPage)
     if currentPage < indexer.totalPages:
       for i in (currentPage + 1)..min(currentPage + 2, indexer.totalPages):
-        pageNav.add hg.a(class="nav-link", href="/?page=" & $i, $i)
-      pageNav.add hg.a(class="nav-link", href="/?page=" & $(currentPage + 1), "Next")
+        pageNav.add hg.a(class="page-link", href="/?page=" & $i, $i)
+      pageNav.add hg.a(class="page-link", id="next", href="/?page=" & $(currentPage + 1), "Next")
 
   # Final page creation
   let index = 
     page:
       title = "Noire"
       header = genNav()
-      content = hg.div(class="post-list",postsArr.join("")) & hg.div(class="page-nav", pageNav)
+      content = hg.div(class="post-list",postsArr.join(""))
+      footer = hg.div(class="page-nav", pageNav)
   resp index
