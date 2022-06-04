@@ -1,16 +1,16 @@
 @font-face {
     font-family: 'RisingSun';
-    src: url('/fonts/RisingSun/RisingSun-Regular.ttf') format('ttf');
+    src: url('/fonts/RisingSun/RisingSun-Regular.ttf') format('TrueType');
 }
 @font-face {
     font-family: 'Fira Code';
-    src: url('/fonts/FiraCode/variable_ttf/FiraCode-VF.ttf') format('ttf'),
+    src: url('/fonts/FiraCode/woff2/FiraCode-VF.woff2') format('woff2'),
          url('/fonts/FiraCode/woff/FiraCode-VF.woff') format('woff'),
-         url('/fonts/FiraCode/woff2/FiraCode-VF.woff2') format('woff2');
+         url('/fonts/FiraCode/variable_ttf/FiraCode-VF.ttf') format('TrueType');
 }
 @font-face {
     font-family: 'Remind Sans Bold';
-    src: url('/fonts/RemindSans/RemindSans-Bold.ttf') format('ttf');
+    src: url('/fonts/RemindSans/RemindSans-Bold.ttf') format('TrueType');
 }
 
 :root {
@@ -55,6 +55,9 @@ body {
     flex-direction: column;
     gap: 16pt;
     font-family: var(--main-font-family);
+}
+main {
+    padding-bottom: 2em;
 }
 img {
     height: 100%;
