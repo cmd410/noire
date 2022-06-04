@@ -1,7 +1,5 @@
 from htmlgen as hg import nil
 import strutils
-import times
-import uri
 import os
 
 import prologue
@@ -33,15 +31,20 @@ proc indexRoute*(ctx: Context) {.async.} =
         hg.img(class="post-img", src=i.image, alt="Post preview")
       else:
         ""
-    
+    var href = i.fullPath
+    href.removePrefix(getPostsDir())
+    href.removeSuffix(".md")
+    href.add ".html"
+    href.removePrefix("/")
+    href = href.replace(r"\", "/")
+
     postsArr.add hg.div(
       class="post-preview",
-      hg.a(href="/" & i.author.encodeUrl(false) & "/" & docName.encodeUrl(false), hg.h1(i.title)),
+      hg.a(href=href, hg.h1(i.title)),
       bgImg,
       hg.p(i.exerpt),
       i.genTags()
     )
-
   # Generate page navigation
   var pageNav = ""
   if indexer.totalPages > 1:

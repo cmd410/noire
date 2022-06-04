@@ -76,24 +76,96 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
   result.add "</code></pre>"
 
 
+proc normalizeLink(link: string, ctxDir: string): string =
+  ## Make absolute link from relative to given ctxDir
 
-proc sanitizeJS(node: var XmlNode) =
-  ## Make <script> tags in html harmless
+  let url = parseUri(link)
+  if url.hostname.len > 0:
+    return link
   
-  iterator scriptKiddies(node: var XmlNode): Natural =
-    var i = 0
-    for child in node.mitems:
-      if child.tag == "script":
-        yield i
-        continue
-      i.inc  # only increment on non-script tags
-      child.sanitizeJS()
+  let
+    ctx = parseUri(ctxDir)
   
-  for i in node.scriptKiddies().toSeq:
+  var 
+    partsRes = url.path.split("/")
+    partsCtx = ctx.path.split("/")
+    newResParts: seq[string] = @[]
+    i: Natural = 0
+  
+  while i <= partsRes.high:
+    let el = partsRes[i]
+    case el
+    of "..":
+      partsRes.delete(i)
+      if partsCtx.len > 0: discard partsCtx.pop
+      continue
+    of ".":
+      i.inc
+    else:
+      newResParts.add el
+      i.inc
+  result = partsCtx.join("/") & "/" & newResParts.join("/")
+
+
+proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
+  if node.kind != xnElement:
+    return
+  var
+    deletionQueue: seq[Natural] = @[]
+    i = 0
+  
+  for element in node.mitems:
+    if element.kind != xnElement:
+      i.inc
+      continue
+    
+    case element.tag:
+    of "pre":
+      # perform syntax highlighting
+      for code in element.mitems:
+        if code.tag != "code": continue
+        let lang = block:
+          var s = code.attrs.getOrDefault("class", "")
+          s.removePrefix("language-")
+          getSourceLanguage(s)
+        
+        case lang
+        of langNone:
+          continue
+        else:
+          let source = code.innerText
+          code.clear
+          code.add newVerbatimText(highlightSyntax(source, lang))
+    of "a":
+      # Normalize local links to md files, to point to html pages
+      var link = element.attrs.getOrDefault("href", "")
+      link = normalizeLink(link, ctxDir)
+      if link.endsWith(".md"):
+        link.removeSuffix ".md"
+        link.add ".html"
+        element.attrs["href"] = link
+    
+    of "img", "source", "video", "audio":
+      # Normalize links to resources
+      let originalSrc = element.attr("src")
+      if originalSrc.len > 0:
+        element.attrs["src"] = normalizeLink(originalSrc, ctxDir)
+    
+    of "script":
+      deletionQueue.add i
+      continue
+    else:
+      element.normalizeHtml(ctxDir)
+    i.inc
+  
+  for i in deletionQueue:
     node.delete i
 
+
 proc newPost*(fullPath: string): Post =
-  let author = fullPath.splitPath[0].extractFilename
+  let author = block:
+    let parts = fullPath.replace(r"\", "/").split("/")
+    parts[0]
 
   var info: FileInfo
   try:
@@ -138,41 +210,29 @@ proc newPost*(fullPath: string): Post =
       continue
     else:
       break
-  for i in html.findAll("img"):
-    # replace all img src to user-local paths
-    let imgUrl = parseUri("/") / author / i.attrs.getOrDefault("src", "")
-    i.attrs["src"] = imgUrl.path
-    i.attrs["lazy"] = ""
+  
+  # very cringe way to get path relative to posts dir
+  when defined(windows):
+    var ctx = fullPath.replace(r"\", "/").rsplit("/", 1)[0]
+    ctx.removePrefix(getPostsDir().replace(r"\", "/"))
+  else:
+    var ctx = fullPath.rsplit("/", 1)[0]
+    ctx.removePrefix(getPostsDir())
+  
+  html.normalizeHtml(ctx)
+  
   for i in html.findAll("img"):
     let link = i.attrs.getOrDefault("src")
-    if link.startsWith "/?":
-      break
     image = link
+    break
 
-  html.sanitizeJS()
-
-  # perform syntax highlighting
-  for pre in html.mitems:
-    if pre.tag != "pre": continue
-    for code in pre.mitems:
-      if code.tag != "code": continue
-      let lang = block:
-        var s = code.attrs.getOrDefault("class", "")
-        s.removePrefix("language-")
-        getSourceLanguage(s)
-
-      case lang
-      of langNone:
-        continue
-      else:
-        let source = code.innerText
-        code.clear
-        code.insert(newVerbatimText(highlightSyntax(source, lang)), 0)
+  # Attempt parse creation date from filename
   let createdAt =
     try:
       parse(fullPath.extractFilename.substr(0, 9), "yyyy-MM-dd").toTime
     except ValueError:
       info.creationTime
+  
   # Some more things to parse here
   result = Post(
     filename: fullPath.extractFilename,
