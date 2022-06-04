@@ -1,6 +1,5 @@
 from htmlgen as hg import nil
 import strutils
-import os
 
 import prologue
 
@@ -23,7 +22,6 @@ proc indexRoute*(ctx: Context) {.async.} =
 
   # Render posts
   for i in indexer.posts:
-    let docName = i.filename.splitFile()[1] & ".html"
     let hasImageBg = i.image.len > 0
     
     let bgImg =
