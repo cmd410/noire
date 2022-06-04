@@ -232,9 +232,17 @@ blockquote {
 ol, ul, li {
     display: block;
 }
-li::before {
+ul > li::before {
     content: '\276F  ';
 }
 li > *:not(:nth-child(2)) {
     padding: 0 2ch;
+}
+ol {
+    list-style: none;
+    counter-reset: li;
+}
+ol > li::before {
+    content: counter(li) '. ';
+    counter-increment: li;
 }
