@@ -242,6 +242,7 @@ ol, ul, li {
 }
 ul > li::before {
     content: '\276F  ';
+    white-space: pre;
 }
 li > *:not(:nth-child(2)) {
     padding: 0 2ch;
@@ -269,4 +270,7 @@ ol {
 ol > li::before {
     content: counter(li) '. ';
     counter-increment: li;
+    white-space: pre;
+    font-family: 'Fira Code', monospace;
+    column-width: 0.2;
 }
