@@ -54,27 +54,27 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
   var tokenizer: GeneralTokenizer
   tokenizer.initGeneralTokenizer(source)
 
-  template current(tk: GeneralTokenizer): untyped =
-    substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1)
+  template mark(tk: GeneralTokenizer, cls: string): untyped =
+    "<span class=\"" & cls & "\">" &
+    substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1) &
+    "</span>"
 
   while true:
     tokenizer.getNextToken(lang)
     case tokenizer.kind
     of gtEof: break
     of gtKeyword:
-      result.add "<span class=\"kwd\">" & tokenizer.current & "</span>"
+      result.add tokenizer.mark "kwd"
     of gtDecNumber, gtHexNumber, gtBinNumber:
-      result.add "<span class=\"num\">" & tokenizer.current & "</span>"
+      result.add tokenizer.mark "num"
     of gtStringLit:
-      result.add "<span class=\"str\">" & tokenizer.current & "</span>"
+      result.add tokenizer.mark "str"
     of gtIdentifier:
-      result.add "<span class=\"ide\">" & tokenizer.current & "</span>"
+      result.add tokenizer.mark "ide"
     of gtComment:
-      result.add "<span class=\"com\">" & tokenizer.current & "</span>"
+      result.add tokenizer.mark "com"
     else:
-      result.add tokenizer.current
-
-  result.add "</code></pre>"
+      result.add substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1)
 
 
 proc normalizeLink(link: string, ctxDir: string): string =
