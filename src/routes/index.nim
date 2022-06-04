@@ -19,7 +19,7 @@ proc indexRoute*(ctx: Context) {.async.} =
       1
 
   # Get posts on current page
-  let indexer = getPostsPage(max(0, currentPage - 1), 2)
+  let indexer = getPostsPage(max(0, currentPage - 1), 25)
 
   # Render posts
   for i in indexer.posts:
