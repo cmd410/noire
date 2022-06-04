@@ -29,10 +29,6 @@ type
     exerpt*: string
     tags*: seq[string]
     image*: string
-  PostOpt = object
-    ## Used for optimised sorting of posts by date
-    dateCreated*: Time
-    fullPath*: string
   IndexerData* = tuple[posts: seq[Post], totalPages: Natural]
 
 
@@ -48,7 +44,7 @@ proc getCacheDir*(): string =
   getDataDir() / "cache"
 
 
-proc `<`*(a,b: PostOpt): bool =
+proc `<`*(a,b: Post): bool =
   a.dateCreated.toUnix > b.dateCreated.toUnix
 
 
@@ -72,8 +68,8 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
       result.add "<span class=\"num\">" & tokenizer.current & "</span>"
     of gtStringLit:
       result.add "<span class=\"str\">" & tokenizer.current & "</span>"
-    of gtCommand:
-      result.add "<span class=\"cmd\">" & tokenizer.current & "</span>"
+    of gtIdentifier:
+      result.add "<span class=\"ide\">" & tokenizer.current & "</span>"
     else:
       result.add tokenizer.current
 
@@ -172,12 +168,16 @@ proc newPost*(fullPath: string): Post =
         let source = code.innerText
         code.clear
         code.insert(newVerbatimText(highlightSyntax(source, lang)), 0)
-
+  let createdAt =
+    try:
+      parse(fullPath.extractFilename.substr(0, 9), "yyyy-MM-dd").toTime
+    except ValueError:
+      info.creationTime
   # Some more things to parse here
   result = Post(
     filename: fullPath.extractFilename,
     fullPath: fullPath,
-    dateCreated: info.creationTime,
+    dateCreated: createdAt,
     dateModified: info.lastWriteTime,
     author: author,
     # the following line looks cringe, but is the most efficient way to get rid of <document> tag I know of
@@ -199,13 +199,13 @@ proc newPost*(fullPath: string): Post =
 
 proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
   var
-    posts: HeapQueue[PostOpt] = initHeapQueue[PostOpt]()
+    posts: HeapQueue[Post] = initHeapQueue[Post]()
   
   for path in walkDirRec(getDataDir() / "posts"):
     if not path.endsWith ".md":
       continue
     try:
-      posts.push PostOpt(dateCreated: getFileInfo(path).creationTime, fullPath: path)
+      posts.push newPost(path)
     except OSError:
       continue
   
@@ -216,5 +216,5 @@ proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
     var current = firstPost
     let limit = min((pageno + 1) * perPage, posts.len)
     while current < limit:
-      result.posts.add newPost(posts[current].fullPath)
+      result.posts.add posts[current]
       inc(current)
