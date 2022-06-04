@@ -62,7 +62,7 @@ main {
 }
 img {
     height: 100%;
-    max-height: 100vh;
+    max-height: 80vh;
     max-width: 100%;
     border-radius: 0.3rem;
     margin: 0 auto;
@@ -146,9 +146,13 @@ nav {
     gap: var(--post-preview-gap);
     align-items: center;
     padding: var(--post-preview-padding);
-    box-shadow: 0 0 8pt #32323232;
-    border: 1px solid #323232;
+    box-shadow: 1pt 1pt 3pt #32323264;
     border-radius: 3pt;
+    filter: grayscale(1);
+    transition: all 0.2s ease-in-out;
+}
+.post-preview:hover {
+    filter: grayscale(0);
 }
 .post-preview p {
     height: fit-content;
