@@ -65,7 +65,7 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
     of gtEof: break
     of gtKeyword:
       result.add tokenizer.mark "kwd"
-    of gtDecNumber, gtHexNumber, gtBinNumber:
+    of gtDecNumber, gtHexNumber, gtBinNumber, gtFloatNumber:
       result.add tokenizer.mark "num"
     of gtStringLit:
       result.add tokenizer.mark "str"
