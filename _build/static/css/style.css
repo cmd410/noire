@@ -38,7 +38,7 @@
     --clr-syn-num: #ffd580; /* Number color */
     --clr-syn-str: #bae67e; /* String color */
     --clr-syn-ide: #ffffff;   /* Identifier color */
-    --clr-syn-com: #686868;
+    --clr-syn-com: #686868;   /* Comment color */
 }
 
 *:not(head) {
@@ -69,17 +69,19 @@ img {
 }
 a {
     display: inline-block;
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-color: inherit;
     color: inherit;
-    background-image: linear-gradient(90deg, #00000000,black, black, #00000000);
     background-position: 0 100%;
     background-size: 100% 1px;
     background-repeat: no-repeat;
     min-width: fit-content;
     max-width: 100%;
+    transition: all 0.5s ease-in-out;
 }
 a:hover, .active-page {
-    background-image: linear-gradient(90deg, #ff000000, var(--clr-accent-main), #ff000000);
+    text-decoration-color: var(--clr-accent-main);
+    color: var(--clr-accent-main);
 }
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Remind Sans Bold', sans-serif;
@@ -88,6 +90,7 @@ h1, h2, h3, h4, h5, h6 {
     max-width: 100%;
     width: 100%;
     text-align: center;
+    display: inline;
 }
 h1 {font-size: 1.60em;}
 h2 {font-size: 1.30em;}
@@ -115,6 +118,7 @@ nav {
 .nav-link, .nav-link:hover {
     background: none;
     text-align: center;
+    text-decoration: none;
 }
 .nav-link::after {
     content: ' \276F';
@@ -172,6 +176,7 @@ nav {
     justify-content: center;
     gap: var(--page-nav-gap);
     padding: var(--page-nav-gap);
+    text-decoration: none;
 }
 .active-page {
     color: var(--clr-accent-main);
