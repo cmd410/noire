@@ -58,12 +58,12 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
     "<span class=\"" & cls & "\">" &
     substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1) &
     "</span>"
-
   while true:
     tokenizer.getNextToken(lang)
+
     case tokenizer.kind
     of gtEof: break
-    of gtKeyword:
+    of gtKeyword, gtProgram:
       result.add tokenizer.mark "kwd"
     of gtDecNumber, gtHexNumber, gtBinNumber, gtFloatNumber:
       result.add tokenizer.mark "num"
@@ -73,6 +73,8 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
       result.add tokenizer.mark "ide"
     of gtComment:
       result.add tokenizer.mark "com"
+    of gtOperator:
+      result.add tokenizer.mark "op"
     else:
       result.add substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1)
 
@@ -125,10 +127,12 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
     of "pre":
       # perform syntax highlighting
       for code in element.mitems:
+        if code.kind != xnElement: continue
         if code.tag != "code": continue
         let lang = block:
           var s = code.attrs.getOrDefault("class", "")
           s.removePrefix("language-")
+
           getSourceLanguage(s)
         
         case lang
@@ -137,7 +141,7 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
         else:
           let source = code.innerText
           code.clear
-          code.add newVerbatimText(highlightSyntax(source, lang))
+          code.add newVerbatimText(highlightSyntax(source.strip(), lang))
     of "a":
       # Normalize local links to md files, to point to html pages
       var link = element.attrs.getOrDefault("href", "")
@@ -278,7 +282,7 @@ proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
   var
     posts: HeapQueue[Post] = initHeapQueue[Post]()
   
-  for path in walkDirRec(getDataDir() / "posts"):
+  for path in walkDirRec(getPostsDir()):
     if not path.endsWith ".md":
       continue
     try:
