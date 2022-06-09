@@ -40,6 +40,7 @@
     --clr-syn-ide: #ffffff;   /* Identifier color */
     --clr-syn-com: #686868;   /* Comment color */
     --clr-syn-op: #73d0ff;
+    --clr-syn-out: #95e6cb;
 }
 
 *:not(head) {
@@ -242,6 +243,7 @@ span.str {color: var(--clr-syn-str);}
 span.ide {color: var(--clr-syn-ide);}
 span.com {color: var(--clr-syn-com);font-style: italic;}
 span.op  {color: var(--clr-syn-op)}
+span.out {color: var(--clr-syn-out)}
 /* Block quotes */
 blockquote {
     border-left: 3px solid var(--clr-fg-main);
