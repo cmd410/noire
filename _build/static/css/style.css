@@ -212,7 +212,6 @@ p {
 }
 pre {
     padding: 6pt 12pt;
-    border-radius: 3pt;
     background-color: var(--clr-code-block-bg);
     color: var(--clr-code-block-fg);
     box-shadow: 1pt 1pt 2pt #32323232;
@@ -225,11 +224,13 @@ code {
     display: inline-block;
     width: fit-content;
     color: inherit;
-    border-radius: 2pt;
     box-shadow: 0 0 2pt var(--clr-fg-main);
     padding: 0 2pt;
 }
-pre > code {box-shadow: none;}
+pre > code {
+    box-shadow: none;
+    padding: 0;
+}
 span {
     display: inline;
 }
