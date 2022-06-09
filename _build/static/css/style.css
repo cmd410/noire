@@ -239,6 +239,10 @@ span.com {color: var(--clr-syn-com);font-style: italic;}
 blockquote {
     border-left: 3px solid var(--clr-fg-main);
     padding: 6pt 12pt;
+    white-space: pre-wrap;
+    display: flex;
+    flex-direction: column;
+    gap: var(--article-body-gap);
 }
 /* Lists */
 ol, ul, li {
