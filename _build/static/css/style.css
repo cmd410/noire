@@ -259,7 +259,7 @@ ul > li::before {
     white-space: pre;
 }
 li > *:not(:nth-child(2)) {
-    padding: 0 2ch;
+    padding-left: 2ch;
 }
 li.chk::before, li.unchk::before {
     display: inline-block;
