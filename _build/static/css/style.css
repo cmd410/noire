@@ -69,6 +69,9 @@ img {
     border-radius: 0.3rem;
     margin: 0 auto;
 }
+audio {
+    border-radius: 3pt;
+}
 a {
     display: inline-block;
     text-decoration: underline;
@@ -167,6 +170,7 @@ nav {
     height: auto;
     max-height: 70vh;
     object-fit: cover;
+    aspect-ratio: 21/9;
 }
 
 /* Page naviagation */
