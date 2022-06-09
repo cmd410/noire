@@ -77,7 +77,6 @@ a {
     background-repeat: no-repeat;
     min-width: fit-content;
     max-width: 100%;
-    transition: all 0.5s ease-in-out;
 }
 a:hover, .active-page {
     text-decoration-color: var(--clr-accent-main);
@@ -248,6 +247,7 @@ blockquote {
     display: flex;
     flex-direction: column;
     gap: var(--article-body-gap);
+    font-style: italic;
 }
 /* Lists */
 ol, ul, li {
