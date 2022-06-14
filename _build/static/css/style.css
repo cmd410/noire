@@ -69,8 +69,10 @@ img {
     border-radius: 0.3rem;
     margin: 0 auto;
 }
-audio {
+audio, video {
+    width: 100%;
     border-radius: 3pt;
+    box-shadow: 2pt 2pt 6pt #32323264;
 }
 a {
     display: inline-block;
