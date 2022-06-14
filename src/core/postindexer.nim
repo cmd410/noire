@@ -73,6 +73,8 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
       result.add tokenizer.mark "ide"
     of gtComment:
       result.add tokenizer.mark "com"
+    of gtProgramOutput:
+      result.add tokenizer.mark "out"
     of gtOperator:
       result.add tokenizer.mark "op"
     else:
