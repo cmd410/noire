@@ -60,7 +60,9 @@ body {
     font-family: var(--main-font-family);
 }
 main {
-    padding-bottom: 2em;
+    display: flex;
+    flex-direction: column;
+    gap: 12pt;
 }
 img {
     height: 100%;
@@ -297,4 +299,30 @@ ol > li::before {
     white-space: pre;
     font-family: 'Fira Code', monospace;
     column-width: 0.2;
+}
+/* Search form */
+form {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6pt;
+    padding: 2pt 1ch;
+}
+input, button {
+    padding: 2pt 1ch;
+    border-radius: 3pt;
+    border: 1px solid #32323232;
+    box-shadow: 1pt 1pt 2pt #32323232;
+}
+input#query {
+    min-width: 25ch;
+    max-width: 100%;
+}
+input#query:focus {
+    border: none;
+}
+button {
+    min-width: min-content;
+    font-weight: bold;
 }

@@ -28,6 +28,9 @@ type
     exerpt*: string
     tags*: seq[string]
     image*: string
+  SearchResult* = object
+    post*: Post
+    score*: float  ## How relevant is result 
   IndexerData* = tuple[posts: seq[Post], totalPages: Natural]
 
 
@@ -45,6 +48,9 @@ proc getCacheDir*(): string =
 
 proc `<`*(a,b: Post): bool =
   a.dateCreated.toUnix > b.dateCreated.toUnix
+
+proc `<`*(a,b: SearchResult): bool =
+  a.score > b.score
 
 
 proc highlightSyntax(source: string, lang: SourceLanguage): string =
@@ -280,17 +286,31 @@ proc newPost*(fullPath: string): Post =
     f.close()
 
 
+iterator walkPostSources(d: string = getPostsDir()): string =
+  var dirsToWalk = @[d]
+  while dirsToWalk.len > 0:
+    let curdir = dirsToWalk.pop
+    for (kind, path) in walkDir(curdir):
+      if path.extractFilename.startsWith("."):
+        continue
+      if kind in {pcDir, pcLinkToDir}:
+        dirsToWalk.add(path)
+        continue
+      if path.endsWith(".md"):
+        yield path
+
+
 proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
-  var
-    posts: HeapQueue[Post] = initHeapQueue[Post]()
+  var posts: HeapQueue[Post] = initHeapQueue[Post]()
   
-  for path in walkDirRec(getPostsDir()):
-    if not path.endsWith ".md":
-      continue
-    try:
-      posts.push newPost(path)
-    except PostNotExistsError:
-      continue
+  for path in walkPostSources():
+    let post = 
+      try:
+        newPost(path)
+      except PostNotExistsError:
+        continue
+
+    posts.push post
   
   result.totalPages = ceilDiv(posts.len, perPage)
   result.posts = @[]
@@ -300,4 +320,39 @@ proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
     let limit = min((pageno + 1) * perPage, posts.len)
     while current < limit:
       result.posts.add posts[current]
+      inc(current)
+
+
+proc searchPosts*(query: string, pageno: Natural, perPage: Natural): IndexerData =
+  if query.len == 0:
+    return getPostsPage(pageno, perPage)
+
+  var results = initHeapQueue[SearchResult]()
+
+  for path in walkPostSources():
+    let post =
+      try:
+        newPost(path)
+      except PostNotExistsError:
+        continue
+    # Rate the post
+    var score = 0'f
+    if query in post.title:
+      score += 1
+    if query in post.tags:
+      score += 0.5
+    score += min(post.content.count(query), 10).float / 10
+    if score == 0'f:
+      continue
+    results.push(SearchResult(post: post, score: score))
+  
+
+  result.totalPages = ceilDiv(results.len, perPage)
+  result.posts = @[]
+  if pageno <= result.totalPages:
+    let firstPost = perPage * pageno
+    var current = firstPost
+    let limit = min((pageno + 1) * perPage, results.len)
+    while current < limit:
+      result.posts.add results[current].post
       inc(current)
