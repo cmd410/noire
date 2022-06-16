@@ -176,7 +176,22 @@ nav {
     object-fit: cover;
     aspect-ratio: 21/9;
 }
-
+/* Tags display */
+.tags-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6pt;
+    justify-content: center;
+}
+.tag {
+    font-size: 11pt;
+    background-color: var(--clr-fg-main);
+    color: var(--clr-bg-main);
+    padding: 1pt 1ch;
+    line-height: 1;
+    border-radius: 6pt;
+}
 /* Page naviagation */
 .page-nav {
     display: flex;
