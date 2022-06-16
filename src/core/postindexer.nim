@@ -10,8 +10,13 @@ import strtabs
 import math
 import packages/docutils/highlite
 import uri
+import sets
+import sequtils
 
-import markdown
+import markdown except toSeq
+# excluding toSeq beacuse it breaks every other toSeq
+# https://github.com/nim-lang/Nim/issues/7322
+
 
 
 type
@@ -222,7 +227,6 @@ proc newPost*(fullPath: string): Post =
       debug "Using cached: " & metapath.extractFilename
       return post
   
-  var tags: seq[string] = @[]
   let originalMd = fullpath.readFile()
 
   let content = markdown(originalMd)
@@ -255,7 +259,7 @@ proc newPost*(fullPath: string): Post =
     let link = i.attrs.getOrDefault("src")
     image = link
     break
-
+  
   # Attempt parse creation date from filename
   let createdAt =
     try:
@@ -263,6 +267,14 @@ proc newPost*(fullPath: string): Post =
     except ValueError:
       info.creationTime
   
+  var tags: HashSet[string] = initHashSet[string]()
+  for i in html.items:
+    if i.kind == xnComment:
+      let text = i.text.strip
+      if text.startsWith "tags:":
+        for tag in text.substr(5).strip.split(" "):
+          tags.incl tag
+
   # Some more things to parse here
   result = Post(
     filename: fullPath.extractFilename,
@@ -274,7 +286,7 @@ proc newPost*(fullPath: string): Post =
     content: ($html).multiReplace(("<document>", ""), ("</document>", "")),
     title: title,
     exerpt: exerpt,
-    tags: tags,
+    tags: toSeq(tags),
     image: image
   )
   let cacheDir = metapath.splitPath[0]
