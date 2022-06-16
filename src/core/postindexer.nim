@@ -211,10 +211,9 @@ proc newPost*(fullPath: string): Post =
       "Post" & fullPath & " was not found."
   
   let metapath = block:
-    var parts = fullPath.splitFile()
-    let filename = parts[1]
-    let usr = parts[0].extractFilename
-    getCacheDir() / usr / filename & ".cache.json"
+    var relPath = fullPath.relativePath(getPostsDir())
+    relPath.removeSuffix(".md")
+    getCacheDir() / relPath & ".cache.json"
   
   block loadCached:
     if fileExists(metapath):
