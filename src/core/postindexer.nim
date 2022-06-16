@@ -17,6 +17,7 @@ import markdown except toSeq
 # excluding toSeq beacuse it breaks every other toSeq
 # https://github.com/nim-lang/Nim/issues/7322
 
+import ./envConf
 
 
 type
@@ -39,15 +40,15 @@ type
   IndexerData* = tuple[posts: seq[Post], totalPages: Natural]
 
 
-proc getDataDir*(): string =
-  result = getEnv("NOIRE_DATA_DIR", getAppDir() / "data")
+proc getDataDir*(): string {.inline.} =
+  result = getAppDataDir()
 
 
-proc getPostsDir*(): string =
+proc getPostsDir*(): string {.inline.} =
   getDataDir() / "posts"
 
 
-proc getCacheDir*(): string =
+proc getCacheDir*(): string {.inline.} =
   getDataDir() / "cache"
 
 

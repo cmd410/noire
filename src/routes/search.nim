@@ -5,6 +5,7 @@ import prologue
 
 import ../render/page
 import ../core/postindexer
+import ../core/envConf
 import ./common/components
 
 
@@ -16,11 +17,11 @@ proc searchRoute*(ctx: Context) {.async.} =
     except ValueError:
       1
   
-  let indexer = searchPosts(query, max(0, pageno - 1), 1)
+  let indexer = searchPosts(query, max(0, pageno - 1), getAppPostsPerPage())
   
   let searchPage =
     page:
-      title = "Noire - Search"
+      title = getAppName() & " - Search"
       header = genNav()
       content = hg.form(
         hg.input(
