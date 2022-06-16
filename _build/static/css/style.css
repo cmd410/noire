@@ -243,6 +243,7 @@ pre {
     overflow-x: scroll;
     scrollbar-width: thin;
     scrollbar-color: var(--clr-syn-kwd) var(--clr-code-block-bg);
+    border-radius: 3pt;
 }
 code {
     font-family: 'Fira Code', monospace;
