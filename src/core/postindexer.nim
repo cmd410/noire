@@ -229,7 +229,7 @@ proc newPost*(fullPath: string): Post =
   
   let originalMd = fullpath.readFile()
 
-  let content = markdown(originalMd)
+  let content = markdown(originalMd, config=initGFMConfig())
   var title = "Untitled"
   var exerpt = ""
   var image = ""
