@@ -315,13 +315,16 @@ iterator walkPostSources(d: string = getPostsDir()): string =
 proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =
   var posts: HeapQueue[Post] = initHeapQueue[Post]()
   
+  let presentDayPresentTime = now().toTime
+
   for path in walkPostSources():
     let post = 
       try:
         newPost(path)
       except PostNotExistsError:
         continue
-
+    if post.dateCreated > presentDayPresentTime:
+      continue
     posts.push post
   
   result.totalPages = ceilDiv(posts.len, perPage)
@@ -340,13 +343,17 @@ proc searchPosts*(query: string, pageno: Natural, perPage: Natural): IndexerData
     return getPostsPage(pageno, perPage)
 
   var results = initHeapQueue[SearchResult]()
-
+  
+  let presentDayPresentTime = now().toTime
+  
   for path in walkPostSources():
     let post =
       try:
         newPost(path)
       except PostNotExistsError:
         continue
+    if post.dateCreated > presentDayPresentTime:
+      continue
     # Rate the post
     var score = 0'f
     if query in post.title:
