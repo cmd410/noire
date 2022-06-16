@@ -81,6 +81,12 @@ will normalize the links so they will be valid. For example if your post in
 `/posts/me/riddles/1.md` references a file `../cat.jpg` the server will normalize
 it to `/posts/me/cat.jpg`
 
+One the index page posts are sorted by their creation date, which is determined by 2 means.
+First, Noire attemps to parse filename of post for `YYYY-MM-DD` pattern in the begining.
+If a post does not have such a pattern in the name, file meta information is used instead.
+You can write a future date in the filename to postpone it's release to the public, it will
+not be listed on the homepage or search results.
+
 You can add tags or keywords to your post to help with SEO with a simple HTML comment:
 
 ```html
