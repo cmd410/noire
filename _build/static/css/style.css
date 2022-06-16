@@ -30,6 +30,7 @@
     --clr-bg-main: #fdfdfd;
     --clr-fg-main: #202530;
     --clr-accent-main: #ad1804;
+    --clr-bg-table-row-alt: #f8f8f8;
 
     /* Syntax highlighing colors */
     --clr-code-block-bg: #202530; /* Code block background */
@@ -43,7 +44,7 @@
     --clr-syn-out: #95e6cb;
 }
 
-*:not(head) {
+*:not(head, table *) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -341,4 +342,21 @@ input#query:focus {
 button {
     min-width: min-content;
     font-weight: bold;
+}
+/* Tables */
+table {
+    display: table;
+    border: 1px #323232 solid;
+    table-layout: auto;
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 1pt 1pt 4pt #32323264;
+}
+td {
+    border: 1px dashed #323232;
+    padding: 2pt 1ch;
+}
+th {
+    border: 1px solid #323232;
+    padding: 2pt 1ch;
 }
