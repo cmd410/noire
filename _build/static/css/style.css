@@ -163,6 +163,7 @@ nav {
     border-radius: 3pt;
     filter: grayscale(1);
     transition: all 0.2s ease-in-out;
+    border: 1px solid #323232;
 }
 .post-preview:hover {
     filter: grayscale(0);
