@@ -38,6 +38,89 @@ The executable is compiled to `_build` subdirectory, where static files reside a
 This directory is self-contained, and you can copy it to any location on your machine
 and run executalbe from there.
 
+### Creating a systemd service
+
+To ensure noire start with your system, you can create a systemd service.
+To create one you can edit a file `/etc/systemd/system/noire.service`
+
+Here is a simple example:
+
+```ini
+[Unit]
+Description=A minimalist blogging website
+
+[Service]
+User=noire
+WorkingDirectory=/home/noire
+ExecStart=/home/noire/noire
+Environment="NOIRE_APP_TITLE=YOUR SITE TITLE HERE"
+Environment="NOIRE_APP_PORT=20080"
+Environment="NOIRE_DATA_DIR=/some/custom/data/dir"
+
+[Install]
+WantedBy=multi-user.target
+```
+
+> This examples assumes you have a user in the system named `noire`, if you don't you can add one with a command:
+> 
+> ```sh
+> sudo useradd -m noire
+> ```
+> Moreover it assumes that the binary along with static dir are in this user's dir
+
+Once you've done that you can start the service by executing
+
+```sh
+sudo systemctl daemon-reload  # make systemd notice you new .service file
+sudo systemctl start noire && sudo systemctl enable noire
+```
+
+### Proxying with Nginx
+
+Proxying with nginx is generaly a good idea for a few reasons:
+
+- App won't need superuser priviliges to use 80 and 443 ports
+- You might want to have multiple sites on single domain
+
+So, let's do this! Here is an example of simple server section for nginx config.
+
+```nginx
+server {
+  listen 80;
+  listen 443 ssl http2;
+  server_name your-domain.tld www.your-domain.tld;
+  ssl_certificate /your-certs-dir/www.your-domain.tld;
+  ssl_certificate_key /your-certs-dir/www.your-domain.tld.key;
+
+  keepalive_timeout 70;
+
+  gzip on;
+  gzip_types
+    application/javascript
+    application/x-javascript
+    application/json
+    application/rss+xml
+    application/xml
+    image/svg+xml
+    image/x-icon
+    application/vnd.ms-fontobject
+    application/font-sfnt
+    text/css
+    text/plain;
+  gzip_min_length 256;
+  gzip_comp_level 5;
+  gzip_vary on;
+
+  location / {
+    proxy_pass http://127.0.0.1:20080;
+  }
+}
+```
+
+Well... not the simplest one, but the only required parts here are `listen`
+directives and `location /` section with `proxy_pass` to a port the app is listening to on localhost. Everything else is just some fancy fluff, that
+nonetheless one might find useful.
+
 ### Configuration
 
 Noire executable has decently reasonable defaults, however
@@ -106,3 +189,9 @@ Source code in this repository is under MIT license.
 Everything that cannot be classified as source code, for example pictures
 and other multimedia assets are under CC BY-SA 4.0 unless stated otherwise.
 (there are LICENSE and COPYRIGHT files that apply per-folder)
+
+
+## ROADMAP
+
+- generate RSS/Atom feeds
+- further improve SEO, add more meta tags, etc
