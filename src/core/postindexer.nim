@@ -200,8 +200,13 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
 
 proc newPost*(fullPath: string): Post =
   let author = block:
-    let parts = fullPath.replace(r"\", "/").split("/")
-    parts[0]
+    let parts = fullPath.relativePath(getPostsDir()).splitPath
+    var author = parts[0]
+    var sub = author.splitPath
+    while sub[0].len > 0 and author != sub[0]:
+      author = sub[0]
+      sub = author.splitPath
+    author
 
   var info: FileInfo
   try:
