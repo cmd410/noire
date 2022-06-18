@@ -56,6 +56,7 @@ ExecStart=/home/noire/noire
 Environment="NOIRE_APP_TITLE=YOUR SITE TITLE HERE"
 Environment="NOIRE_APP_PORT=20080"
 Environment="NOIRE_DATA_DIR=/some/custom/data/dir"
+Environment="NOIRE_HOSTNAME=your-domain.tld" # used for atom feed links primarily
 
 [Install]
 WantedBy=multi-user.target
@@ -144,6 +145,7 @@ This is a list of all the options available, expected type, and default value.
 | `NOIRE_BUFSIZE`        | Natural       | 40960                             | Prologue server setting                                          |
 | `NOIRE_DATA_DIR`       | string        | "./data" (relative to executable) | Directory where application will store data                      |
 | `NOIRE_POSTS_PER_PAGE` | Natural       | 25                                | Maximum amount of posts allowed to be displayed on a single page |
+| `NOIRE_HOSTNAME`       | string        | localhost                         | A host name used in Atom feed links, including port if need be   |
 
 > Note: When setting `NOIRE_DATA_DIR`, make sure user running the application has read and write permissions for this directory
 
