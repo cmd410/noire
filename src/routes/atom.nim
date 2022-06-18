@@ -10,16 +10,7 @@ import ../core/envConf
 
 
 proc getSiteUrl(): string =
-  let port = getAppPort()
-  
-  let portString = 
-    case port
-    of 80.Port, 443.Port:
-      ""
-    else:
-      ":" & $(port.uint16)
-  
-  result = "http://" & getAppHostName() & portString & "/"
+  result = "http://" & getAppHostName() & "/"
 
 
 template addElem(parent: XmlNode, tag, text: string): untyped =
