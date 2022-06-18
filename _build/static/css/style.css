@@ -83,15 +83,13 @@ audio, video {
     box-shadow: 2pt 2pt 6pt #32323264;
 }
 a {
-    display: inline-block;
+    display: inline;
     text-decoration: underline;
     text-decoration-color: inherit;
     color: inherit;
-    background-position: 0 100%;
-    background-size: 100% 1px;
-    background-repeat: no-repeat;
     min-width: fit-content;
     max-width: 100%;
+    font-size: inherit;
 }
 a:hover, .active-page {
     text-decoration-color: var(--clr-accent-main);
@@ -254,8 +252,7 @@ pre {
 }
 code {
     font-family: 'Fira Code', monospace;
-    display: inline-block;
-    width: fit-content;
+    display: inline;
     color: inherit;
     box-shadow: 0 0 2pt var(--clr-fg-main);
     padding: 0 2pt;
