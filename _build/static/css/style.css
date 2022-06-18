@@ -44,7 +44,7 @@
     --clr-syn-out: #95e6cb;
 }
 
-*:not(head, table *) {
+*:not(head, table *, em, b, span, strong) {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
