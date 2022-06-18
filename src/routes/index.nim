@@ -23,5 +23,5 @@ proc indexRoute*(ctx: Context) {.async.} =
       title = getAppName()
       header = genNav()
       content = genPostsList(indexer)
-      footer = genPageNav(indexer, currentPage)
+      footer = genPageNav(indexer, currentPage) & hg.a(href="/atom.xml", "Atom feed")
   resp index

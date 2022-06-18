@@ -20,7 +20,7 @@ proc readRoute*(ctx: Context) {.async.} =
   let originalMd = block:
     var parts = requestedPage.splitFile()
     parts[0] & "/" & parts[1] & ".md"
-  
+
   try:
     let postData = newPost(getPostsDir() / originalMd)
     let finalPage =
@@ -29,6 +29,7 @@ proc readRoute*(ctx: Context) {.async.} =
         header = genNav()
         content = hg.article(postData.content)
         tags = postData.tags
+        footer = hg.a(href="/atom.xml", "Atom feed")
     
     resp finalPage
   except PostNotExistsError:

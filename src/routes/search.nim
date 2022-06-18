@@ -18,7 +18,7 @@ proc searchRoute*(ctx: Context) {.async.} =
       1
   
   let indexer = searchPosts(query, max(0, pageno - 1), getAppPostsPerPage())
-  
+
   let searchPage =
     page:
       title = getAppName() & " - Search"
@@ -31,6 +31,6 @@ proc searchRoute*(ctx: Context) {.async.} =
         ),
         hg.button("Search")
       ) & genPostsList(indexer)
-      footer = genPageNav(indexer, pageno, ctx.request.path & "?" & ctx.request.query)
+      footer = genPageNav(indexer, pageno, ctx.request.path & "?" & ctx.request.query) & hg.a(href="/atom.xml", "Atom feed")
   
   resp searchPage

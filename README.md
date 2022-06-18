@@ -193,5 +193,4 @@ and other multimedia assets are under CC BY-SA 4.0 unless stated otherwise.
 
 ## ROADMAP
 
-- generate RSS/Atom feeds
 - further improve SEO, add more meta tags, etc

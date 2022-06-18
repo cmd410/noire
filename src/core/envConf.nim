@@ -26,3 +26,6 @@ proc getAppDataDir*(): string =
 
 proc getAppPostsPerPage*(): Natural =
   max(getEnv("NOIRE_POSTS_PER_PAGE", "25").parseInt, 1)
+
+proc getAppHostName*(): string =
+  getEnv("NOIRE_HOSTNAME", "localhost")
