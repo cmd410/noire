@@ -141,6 +141,8 @@ proc normalizeHtml(node: var XmlNode, ctxDir: string = "") =
     of "pre":
       # perform syntax highlighting
       for code in element.mitems:
+        if code.attrs == nil:
+          code.attrs = newStringTable(modeCaseInsensitive)
         if code.kind != xnElement: continue
         if code.tag != "code": continue
         let lang = block:
