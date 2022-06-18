@@ -66,10 +66,20 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
   var tokenizer: GeneralTokenizer
   tokenizer.initGeneralTokenizer(source)
 
+  template getSub(tk: GeneralTokenizer): string =
+    substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1).multiReplace(
+      ("<", "&lt;"),
+      (">", "&gt;"),
+      ("\"", "&quot;"),
+      ("'", "&apos;"),
+      ("&", "&amp;")
+    )
+
   template mark(tk: GeneralTokenizer, cls: string): untyped =
     "<span class=\"" & cls & "\">" &
-    substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1) &
+    tk.getSub() &
     "</span>"
+  
   while true:
     tokenizer.getNextToken(lang)
 
