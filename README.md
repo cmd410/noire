@@ -9,7 +9,7 @@ It's features include:
 - Elegant CSS styling, no clutter
 - No javascript, easily accesible on all platforms across all browsers
 - Server-side syntax highlighting for code blocks
-   - Supported languages: Nim, Rust, C++, C#, C, Java, Yaml, Python, Console
+   - Supported languages: Nim, Rust, C++, C#, C, Java, Javascript, Yaml, Python, Console
 
 ## Why?
 
