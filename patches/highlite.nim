@@ -56,13 +56,14 @@
 ## as program output.
 
 import
-  strutils
+  strutils,
+  tables
 from algorithm import binarySearch
 
 type
   SourceLanguage* = enum
     langNone, langNim, langCpp, langCsharp, langC, langJava,
-    langYaml, langPython, langCmd, langConsole, langRust
+    langYaml, langPython, langCmd, langConsole, langRust, langJs
   TokenClass* = enum
     gtEof, gtNone, gtWhitespace, gtDecNumber, gtBinNumber, gtHexNumber,
     gtOctNumber, gtFloatNumber, gtIdentifier, gtKeyword, gtStringLit,
@@ -81,10 +82,17 @@ type
 
 const
   sourceLanguageToStr*: array[SourceLanguage, string] = ["none",
-    "Nim", "C++", "C#", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust"]
+    "Nim", "C++", "C#", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust",
+    "Javascript"]
   sourceLanguageToAlpha*: array[SourceLanguage, string] = ["none",
-    "Nim", "cpp", "csharp", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust"]
+    "Nim", "cpp", "csharp", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust",
+    "Javascript"]
     ## list of languages spelled with alpabetic characters
+  sourceLanguageAliases* = 
+    {
+      "js": sourceLanguageToStr[langJs]
+    }.toTable
+    
   tokenClassToStr*: array[TokenClass, string] = ["Eof", "None", "Whitespace",
     "DecNumber", "BinNumber", "HexNumber", "OctNumber", "FloatNumber",
     "Identifier", "Keyword", "StringLit", "LongStringLit", "CharLit",
@@ -112,7 +120,13 @@ const
 
 
 proc getSourceLanguage*(name: string): SourceLanguage =
+  let aliasedName = sourceLanguageAliases.getOrDefault(name, name)
   for i in succ(low(SourceLanguage)) .. high(SourceLanguage):
+    if aliasedName != name:
+      if cmpIgnoreStyle(aliasedName, sourceLanguageToStr[i]) == 0:
+        return i
+      if cmpIgnoreStyle(aliasedName, sourceLanguageToAlpha[i]) == 0:
+        return i
     if cmpIgnoreStyle(name, sourceLanguageToStr[i]) == 0:
       return i
     if cmpIgnoreStyle(name, sourceLanguageToAlpha[i]) == 0:
@@ -993,11 +1007,22 @@ proc cmdNextToken(g: var GeneralTokenizer, dollarPrompt = false) =
 
 proc rustNextToken(g: var GeneralTokenizer) =
   const
-    keywords: array[38, string] = [
+    keywords = [
       "as", "break", "const", "continue", "crate", "else", "enum", "extern", "false", "fn", "for",
       "if", "impl", "in", "let", "loop", "match", "mod", "move", "mut", "pub", "ref", "return",
       "self", "Self", "static", "struct", "super", "trait", "true", "type", "unsafe", "use",
       "where", "while", "async", "await", "dyn"
+    ]
+  clikeNextToken(g, keywords, {})
+
+proc jsNextToken(g: var GeneralTokenizer) =
+  const
+    keywords = [  
+    "break","case","catch","class","const","continue","debugger",
+    "default","delete","do","else","export","extends","finally",
+    "for","function","if","import","in","instanceof","new","return",
+    "super","switch","this","throw","try","typeof","var","void",
+    "while","with","yield",
     ]
   clikeNextToken(g, keywords, {})
 
@@ -1015,6 +1040,7 @@ proc getNextToken*(g: var GeneralTokenizer, lang: SourceLanguage) =
   of langCmd: cmdNextToken(g)
   of langConsole: cmdNextToken(g, dollarPrompt=true)
   of langRust: rustNextToken(g)
+  of langJs: jsNextToken(g)
 
 proc tokenize*(text: string, lang: SourceLanguage): seq[(string, TokenClass)] =
   var g: GeneralTokenizer
