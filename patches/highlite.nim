@@ -1022,7 +1022,9 @@ proc jsNextToken(g: var GeneralTokenizer) =
     "default","delete","do","else","export","extends","finally",
     "for","function","if","import","in","instanceof","new","return",
     "super","switch","this","throw","try","typeof","var","void",
-    "while","with","yield",
+    "while","with","yield", "let", "await", "enum", "implements",
+    "interface","let","package","private","protected","public",
+    "static","yield",
     ]
   clikeNextToken(g, keywords, {})
 
