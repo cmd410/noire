@@ -267,6 +267,9 @@ pre > code {
 span {
     display: inline;
 }
+summary {
+    max-width: fit-content;
+}
 /* Code block syntax highlighting colors */
 span.kwd {color: var(--clr-syn-kwd);}
 span.num {color: var(--clr-syn-num);}
@@ -284,6 +287,22 @@ blockquote {
     flex-direction: column;
     gap: var(--article-body-gap);
     font-style: italic;
+    background-color: #80808032;
+}
+details > * {
+    margin: 0.5em 0;
+}
+details {
+    border-left: 1px solid #323232;
+    padding-left: 1ch;
+}
+details > summary {
+    padding: 2px 6px;
+    width: fit-content;
+    background-color: #80808032;
+    border: none;
+    cursor: pointer;
+    border-radius: 0.5em;
 }
 /* Lists */
 ol, ul, li {
