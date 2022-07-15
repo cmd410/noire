@@ -63,7 +63,8 @@ from algorithm import binarySearch
 type
   SourceLanguage* = enum
     langNone, langNim, langCpp, langCsharp, langC, langJava,
-    langYaml, langPython, langCmd, langConsole, langRust, langJs
+    langYaml, langPython, langCmd, langConsole, langRust, langJs,
+    langGDScript
   TokenClass* = enum
     gtEof, gtNone, gtWhitespace, gtDecNumber, gtBinNumber, gtHexNumber,
     gtOctNumber, gtFloatNumber, gtIdentifier, gtKeyword, gtStringLit,
@@ -83,10 +84,10 @@ type
 const
   sourceLanguageToStr*: array[SourceLanguage, string] = ["none",
     "Nim", "C++", "C#", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust",
-    "Javascript"]
+    "Javascript", "GDScript"]
   sourceLanguageToAlpha*: array[SourceLanguage, string] = ["none",
     "Nim", "cpp", "csharp", "C", "Java", "Yaml", "Python", "Cmd", "Console", "Rust",
-    "Javascript"]
+    "Javascript", "GDScript"]
     ## list of languages spelled with alpabetic characters
   sourceLanguageAliases* = 
     {
@@ -1018,15 +1019,27 @@ proc rustNextToken(g: var GeneralTokenizer) =
 proc jsNextToken(g: var GeneralTokenizer) =
   const
     keywords = [  
-    "break","case","catch","class","const","continue","debugger",
-    "default","delete","do","else","export","extends","finally",
-    "for","function","if","import","in","instanceof","new","return",
-    "super","switch","this","throw","try","typeof","var","void",
-    "while","with","yield", "let", "await", "enum", "implements",
-    "interface","let","package","private","protected","public",
-    "static","yield",
+      "break","case","catch","class","const","continue","debugger",
+      "default","delete","do","else","export","extends","finally",
+      "for","function","if","import","in","instanceof","new","return",
+      "super","switch","this","throw","try","typeof","var","void",
+      "while","with","yield", "let", "await", "enum", "implements",
+      "interface","let","package","private","protected","public",
+      "static","yield",
     ]
   clikeNextToken(g, keywords, {})
+
+proc gdscriptNextToken(g: var GeneralTokenizer) =
+  const
+    keywords = [
+      "INF", "NAN", "PI", "TAU", "as", "assert", "await",
+      "break", "breakpoint", "class", "class_name", "const",
+      "continue", "elif", "else", "enum", "extends", "for",
+      "func", "if", "is", "match", "pass", "preload",
+      "return", "self", "signal", "static", "var",
+      "void", "while", "yield"
+    ]
+  nimNextToken(g, keywords)
 
 proc getNextToken*(g: var GeneralTokenizer, lang: SourceLanguage) =
   g.lang = lang
@@ -1043,6 +1056,7 @@ proc getNextToken*(g: var GeneralTokenizer, lang: SourceLanguage) =
   of langConsole: cmdNextToken(g, dollarPrompt=true)
   of langRust: rustNextToken(g)
   of langJs: jsNextToken(g)
+  of langGDScript: gdscriptNextToken(g)
 
 proc tokenize*(text: string, lang: SourceLanguage): seq[(string, TokenClass)] =
   var g: GeneralTokenizer
