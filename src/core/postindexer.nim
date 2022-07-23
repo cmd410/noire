@@ -79,7 +79,7 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
     "<span class=\"" & cls & "\">" &
     tk.getSub() &
     "</span>"
-  
+  result.add "<div class=\"line\"><div class=\"line-content\">"
   while true:
     tokenizer.getNextToken(lang)
 
@@ -99,8 +99,15 @@ proc highlightSyntax(source: string, lang: SourceLanguage): string =
       result.add tokenizer.mark "out"
     of gtOperator:
       result.add tokenizer.mark "op"
+    of gtWhitespace:
+      for i in substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1):
+        if i == '\n':
+          result.add "</div></div><div class=\"line\"><div class=\"line-content\">"
+        else:
+          result.add i
     else:
       result.add substr(source, tokenizer.start, tokenizer.length + tokenizer.start - 1)
+  result.add "</div></div>"
 
 
 proc normalizeLink(link: string, ctxDir: string): string =

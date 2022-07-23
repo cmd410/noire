@@ -30,6 +30,7 @@ proc readRoute*(ctx: Context) {.async.} =
         content = hg.article(postData.content)
         tags = postData.tags
         footer = hg.a(href="/atom.xml", "Atom feed")
+        styles = @["/css/style.css", "/css/highlite.css"]
     
     resp finalPage
   except PostNotExistsError:

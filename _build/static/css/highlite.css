@@ -1,0 +1,76 @@
+@font-face {
+	font-family: 'Iosevka Web';
+	src: url('/fonts/iosevka/iosevka-regular.woff2') format('woff2'),
+       url('/fonts/iosevka/iosevka-regular.ttf') format('truetype');
+}
+
+:root {
+  /* Syntax highlighing colors */
+  --clr-code-block-bg: #ffffff; /* Code block background */
+  --clr-code-block-fg: #24292f; /* Code block foreground */
+  --clr-syn-kwd: #cf222e; /* Keyword color */
+  --clr-syn-num: #0a3069; /* Number color */
+  --clr-syn-str: #0a6945; /* String color */
+  --clr-syn-ide: #3d70d4;   /* Identifier color */
+  --clr-syn-com: #4b4f4f;   /* Comment color */
+  --clr-syn-op: #629baa;  /* Operator color */
+  --clr-syn-out: #4b4f4f;  /* Program output color */
+  --clr-lineno: #4b4f4f;  /* Line number color */
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Syntax highlighing colors - Dark theme */
+  --clr-code-block-bg: #1f2023; /* Code block background */
+  --clr-code-block-fg: #bcb28d; /* Code block foreground */
+  --clr-syn-kwd: #d43c6f; /* Keyword color */
+  --clr-syn-num: #dda52d; /* Number color */
+  --clr-syn-str: #58a44c; /* String color */
+  --clr-syn-ide: #40b2d0;   /* Identifier color */
+  --clr-syn-com: #6e7781;   /* Comment color */
+  --clr-syn-op: #40b2d0;  /* Operator color */
+  --clr-syn-out: #6e7781;  /* Program output color */
+  --clr-lineno: #6e7781;  /* Line number color */
+  }
+}
+/* Code block syntax highlighting colors */
+span.kwd {color: var(--clr-syn-kwd);}
+span.num {color: var(--clr-syn-num);}
+span.str {color: var(--clr-syn-str);}
+span.ide {color: var(--clr-syn-ide);}
+span.com {color: var(--clr-syn-com);font-style: italic;}
+span.op  {color: var(--clr-syn-op)}
+span.out {color: var(--clr-syn-out)}
+
+code {
+  font-family: 'Iosevka Web', monospace;
+  color: var(--clr-code-block-fg);
+  background-color: var(--clr-code-block-bg);
+  border-radius: 6pt;
+  border: 1px solid #d0d7de;
+}
+pre {
+  display: grid;
+  max-width: 100%;
+  overflow-x: scroll;
+}
+pre > code {
+  padding: 0.5em 1ch;
+  counter-reset: line;
+  display: grid;
+}
+pre > code > .line::before {
+  counter-increment: line;
+  content: counter(line);
+  grid-column: 1;
+  color: var(--clr-lineno);
+  text-align: right;
+  padding-right: 1ch;
+}
+.line {
+  display: grid;
+  grid-template-columns: 4ch auto;
+  column-gap: 1ch;
+}
+.line > .line-content {
+  grid-column: 2;
+}

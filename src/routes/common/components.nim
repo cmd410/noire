@@ -35,13 +35,7 @@ proc genTags*(p: Tagged): string =
 proc genPostsList*(indexer: IndexerData): string =
   var postsArr: seq[string] = @[]
   for i in indexer.posts:
-    let hasImageBg = i.image.len > 0
     
-    let bgImg =
-      if hasImageBg:
-        hg.img(class="post-img", src=i.image, alt="Post preview")
-      else:
-        ""
     var href = i.fullPath
     href.removePrefix(getPostsDir())
     href.removeSuffix(".md")
@@ -52,7 +46,6 @@ proc genPostsList*(indexer: IndexerData): string =
     postsArr.add hg.div(
       class="post-preview",
       hg.a(href=href, hg.h1(i.title)),
-      bgImg,
       hg.p(i.exerpt),
       i.genTags()
     )

@@ -30,7 +30,7 @@ proc searchRoute*(ctx: Context) {.async.} =
           value=query
         ),
         hg.button("Search")
-      ) & genPostsList(indexer)
-      footer = genPageNav(indexer, pageno, ctx.request.path & "?" & ctx.request.query) & hg.a(href="/atom.xml", "Atom feed")
+      ) & genPostsList(indexer) & genPageNav(indexer, pageno, ctx.request.path & "?" & ctx.request.query)
+      footer = hg.a(href="/atom.xml", "Atom feed")
   
   resp searchPage

@@ -16,7 +16,7 @@ macro page*(arg: untyped): string =
   ## * title: ``string`` - Page title
   ## * tags: ``openArray[string]`` - page keywords for SEO
   ## * content: ``string`` - Main page content
-  ## * style: ``string`` - a link to custom stylesheet for the page (default: "/css/style.css")
+  ## * styles: ``seq[string]`` - a link to custom stylesheet for the page (default: "/css/style.css")
   ## * header: ``string`` - contents of <header> tag of the page
   ## * footer: ``string`` - contents of <footer> tag of the page
   runnableExamples:
@@ -61,8 +61,12 @@ macro page*(arg: untyped): string =
     elif keynode.eqIdent "content":
       contentStmt = quote do: hg.main(`valuenode`)
     
-    elif keynode.eqIdent "style":
-      styleStmt = quote do: hg.link(rel="stylesheet", href=`valuenode`)
+    elif keynode.eqIdent "styles":
+      styleStmt = quote do:
+        var s = ""
+        for i in `valuenode`:
+          s.add hg.link(rel="stylesheet", href=i)
+        s
     
     elif keynode.eqIdent "header":
       headerStmt = quote do: hg.header(`valuenode`)
