@@ -26,6 +26,7 @@ proc readRoute*(ctx: Context) {.async.} =
     let finalPage =
       page:
         title = postData.title
+        description=postData.exerpt
         header = genNav()
         content = hg.article(postData.content)
         tags = postData.tags

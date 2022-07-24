@@ -1,8 +1,8 @@
 import strutils
-
 from htmlgen as hg import nil
-
 import std/macros
+
+import ../core/envConf
 
 
 proc buildTags*(tags: openArray[string]): string =
@@ -19,6 +19,7 @@ macro page*(arg: untyped): string =
   ## * styles: ``seq[string]`` - a link to custom stylesheet for the page (default: "/css/style.css")
   ## * header: ``string`` - contents of <header> tag of the page
   ## * footer: ``string`` - contents of <footer> tag of the page
+  ## * description: ``string`` - page description for meta tag
   runnableExamples:
     from htmlgen as hg import nil
 
@@ -46,6 +47,7 @@ macro page*(arg: untyped): string =
   var styleStmt = quote do: hg.link(rel="stylesheet", href="/css/style.css")
   var headerStmt = quote do: ""
   var footerStmt = quote do: ""
+  var descriptionStmt = quote do: ""
 
   for i in arg:
     i.expectKind nnkAsgn
@@ -53,7 +55,8 @@ macro page*(arg: untyped): string =
     let valuenode = i[1]
     keynode.expectKind nnkIdent
     if keynode.eqIdent "title":
-      titleStmt = quote do: hg.title(`valuenode`)
+      titleStmt = quote do:
+        hg.title(`valuenode`) & "<meta name=\"og:title\" content=\"" & $(`valuenode`) & "\"/>"
     
     elif keynode.eqIdent "tags":
       tagsStmt = quote do: buildTags(`valuenode`)
@@ -73,21 +76,23 @@ macro page*(arg: untyped): string =
     
     elif keynode.eqIdent "footer":
       footerStmt = quote do: hg.footer(`valuenode`)
-    
+    elif keynode.eqIdent "description":
+      descriptionStmt = quote do: "<meta name=\"og:description\" content=\"" & $(`valuenode`) & "\"/>"
     else:
       warning("Unknown element: " & repr(keynode).escape & " will be skipped", keynode)
 
   result = quote do:
-    "<!DOCTYPE html>" & hg.html(
+    "<!DOCTYPE html>" & "<html prefix=\"og: http://ogp.me/ns#\">" &
       hg.head(
         hg.meta(charset="UTF-8"),
         `titleStmt`,
+        `descriptionStmt`,
+        "<meta name=\"og:site_name\" content=\"" & getAppName() & "\"/>",
         `tagsStmt`,
         `styleStmt`,
-      ),
+      ) &
       hg.body(
         `headerStmt`,
         `contentStmt`,
         `footerStmt`
-      )
-    )
+      ) & "</html>"
