@@ -18,6 +18,7 @@ import markdown except toSeq
 # https://github.com/nim-lang/Nim/issues/7322
 
 import ./envConf
+import ./util
 
 
 type
@@ -323,17 +324,9 @@ proc newPost*(fullPath: string): Post =
 
 
 iterator walkPostSources(d: string = getPostsDir()): string =
-  var dirsToWalk = @[d]
-  while dirsToWalk.len > 0:
-    let curdir = dirsToWalk.pop
-    for (kind, path) in walkDir(curdir):
-      if path.extractFilename.startsWith("."):
-        continue
-      if kind in {pcDir, pcLinkToDir}:
-        dirsToWalk.add(path)
-        continue
-      if path.endsWith(".md"):
-        yield path
+  for path in walkVisible(d):
+    if path.endsWith(".md"):
+      yield path
 
 
 proc getPostsPage*(pageno: Natural, perPage: Natural): IndexerData =

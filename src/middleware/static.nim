@@ -9,6 +9,7 @@ import std/strutils
 import prologue
 
 from ../core/postindexer import getPostsDir
+from ../core/util import walkVisible
 
 proc staticFilesMiddleware*(staticPath: string): HandlerAsync =
   result = proc(ctx: Context) {.async.} =
@@ -16,8 +17,9 @@ proc staticFilesMiddleware*(staticPath: string): HandlerAsync =
 
     # First check user resource
     let user_res = getPostsDir() / path
-    if user_res.fileExists:
-      await ctx.staticFileResponse(user_res, "")
+    for i in walkVisible(getPostsDir()):
+      if cmpPaths(i, user_res) == 0:
+        await ctx.staticFileResponse(user_res, "")
     
     # Then fallback to common static dir
     let common_res =  staticPath / path
