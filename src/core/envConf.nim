@@ -29,3 +29,12 @@ proc getAppPostsPerPage*(): Natural =
 
 proc getAppHostName*(): string =
   getEnv("NOIRE_HOSTNAME", "localhost")
+
+proc getStaticDir*(): string =
+  getEnv("NOIRE_STATIC_DIR", getAppDir() / "static")
+
+proc getPostsDir*(): string {.inline.} =
+  getEnv("NOIRE_POSTS_DIR", getAppDataDir() / "posts")
+
+proc getCacheDir*(): string {.inline.} =
+  getEnv("NOIRE_CACHE_DIR", getAppDataDir() / "cache")

@@ -1,4 +1,4 @@
-import os
+import os except getCacheDir
 import times
 import heapqueue
 import strutils
@@ -40,17 +40,6 @@ type
     score*: float  ## How relevant is result 
   IndexerData* = tuple[posts: seq[Post], totalPages: Natural]
 
-
-proc getDataDir*(): string {.inline.} =
-  result = getAppDataDir()
-
-
-proc getPostsDir*(): string {.inline.} =
-  getDataDir() / "posts"
-
-
-proc getCacheDir*(): string {.inline.} =
-  getDataDir() / "cache"
 
 
 proc `<`*(a,b: Post): bool =

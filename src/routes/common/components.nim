@@ -3,6 +3,7 @@ import strutils
 import uri
 
 import ../../core/postindexer
+import ../../core/envConf
 
 
 type
