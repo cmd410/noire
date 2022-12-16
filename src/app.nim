@@ -10,6 +10,8 @@ import ./core/envConf
 
 
 addHandler(newConsoleLogger(fmtStr="[$datetime] - $levelname: "))
+
+when defined(filelog):
 addHandler(newRollingFileLogger("rolling.log", fmtStr="[$datetime] - $levelname: "))
 
 
