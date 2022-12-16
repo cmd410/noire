@@ -1,4 +1,3 @@
-import os
 import logging
 
 import prologue
@@ -12,7 +11,7 @@ import ./core/envConf
 addHandler(newConsoleLogger(fmtStr="[$datetime] - $levelname: "))
 
 when defined(filelog):
-addHandler(newRollingFileLogger("rolling.log", fmtStr="[$datetime] - $levelname: "))
+  addHandler(newRollingFileLogger("rolling.log", fmtStr="[$datetime] - $levelname: "))
 
 
 proc readConfig(): Settings =
@@ -28,6 +27,6 @@ proc readConfig(): Settings =
 
 proc noireMain*() =
   var app = newApp(settings = readConfig())
-  app.use staticFilesMiddleware(getAppDir() / "static")
+  app.use staticFilesMiddleware(getStaticDir())
   app.mountRoutes()
   app.run()
